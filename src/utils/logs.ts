@@ -9,11 +9,13 @@ const abi = [
 const interfaceABI = new ethers.utils.Interface(abi);
 
 // Function to decode a SpinCompleted event from transaction receipt
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function decodeSpinCompletedEvent(receipt: any, contractAddress: string) {
     // Convert the contract address to lowercase for comparison
     contractAddress = contractAddress.toLowerCase();
 
     // Find the SpinCompleted log in the receipt
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const spinLog = receipt.logs.find((log: any) =>
         log.address.toLowerCase() === contractAddress
         // We don't need to check the topic[0] because we'll try to decode it later

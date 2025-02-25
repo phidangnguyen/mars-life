@@ -1,5 +1,6 @@
 import { BUNDLER_ENDPOINT } from "@/constants/constant";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const waitForUserOperationReceipt = async (hash: string, timeout = 60000, interval = 5000): Promise<any> => {
     const startTime = Date.now();
     while (Date.now() - startTime < timeout) {        
@@ -11,7 +12,7 @@ export const waitForUserOperationReceipt = async (hash: string, timeout = 60000,
     }
     throw new Error('Timeout waiting for UserOperation receipt');
 }
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const getUserOperationReceipt = async (hash: string): Promise<any | null> => {
     try {
         const response = await fetch(`${BUNDLER_ENDPOINT}onchain/user-op-receipt/2484/${hash}`, {

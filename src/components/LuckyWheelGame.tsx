@@ -6,7 +6,6 @@ import { WheelSegment, TransactionState, GameResult } from '@/types/game';
 import Login from '@/components/Login';
 import TransactionStatus from '@/components/TransactionStatus';
 import ResultDisplay from '@/components/ResultDisplay';
-import { ethers } from 'ethers';
 import { useToast } from './ui/toast';
 import { useAuth } from '@/hooks/useAuth';
 import { createSignature } from '@/utils/signature';
