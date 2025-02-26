@@ -28,8 +28,13 @@ const AuthCallback = () => {
         const decodedState = JSON.parse(atob(state));
         console.log('Decoded state:', decodedState);
 
+         // Determine the provider based on the URL path
+         const path = window.location.pathname;
+         const provider = path.includes('twitter') ? 'twitter' : 'google';
+         console.log(`Using ${provider} authentication provider`);
+
         // Call your backend
-        const response = await fetch(`${BUNDLER_ENDPOINT}auth/google/callback`, {
+        const response = await fetch(`${BUNDLER_ENDPOINT}auth/${provider}/callback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -38,7 +43,7 @@ const AuthCallback = () => {
             'x-api-key': decodedState['x-api-key'],
             'origin': decodedState.origin
           },
-          body: JSON.stringify({ code })
+          body: JSON.stringify({ code, state })
         });
 
         console.log("response: ", response);

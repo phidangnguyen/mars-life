@@ -24,10 +24,12 @@ export function useAuth() {
       if (token && userDataStr) {
         try {
           const userData = JSON.parse(userDataStr);
+          const lastName = userData.googleLastName ? userData.googleLastName : (userData.twitterLastName ? userData.twitterLastName : "")
+          const firstName = userData.googleFirstName ? userData.googleFirstName : (userData.twitterFirstName ? userData.twitterFirstName : "")
           setUser({
             id: userData.id,
             email: userData.googleEmail,
-            name: `${userData.googleLastName} ${userData.googleFirstName}`,
+            name: `${lastName} ${firstName}`,
             walletAddress: `${userData.eoaWallet}`
           });
           setIsAuthenticated(true);

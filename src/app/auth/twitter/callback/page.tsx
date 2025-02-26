@@ -1,7 +1,7 @@
 'use client';
 import AuthCallback from '@/components/AuthCallBack';
 
-export default function GoogleCallbackPage() {
+export default function TwitterCallbackPage() {
   return <AuthCallback />;
 }
 
