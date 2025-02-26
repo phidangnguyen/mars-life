@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { createSignature } from '@/utils/signature';
 import { BUNDLER_ENDPOINT } from '@/constants/constant';
 interface LoginProps {
@@ -8,7 +9,9 @@ interface LoginProps {
 
 const Login = ({ onLoginStart }: LoginProps) => {
     const [isLoading, setIsLoading] = useState(false);
-    const handleGoogleLogin = async () => {
+    const [loginProvider, setLoginProvider] = useState<string | null>(null);
+
+    const handleOAuthLogin = async (provider: string) => {
         if (onLoginStart) {
             onLoginStart();
         }
@@ -20,7 +23,7 @@ const Login = ({ onLoginStart }: LoginProps) => {
             const requestHeaders = await createSignature(
                 domain
             );
-            const response = await fetch(`${BUNDLER_ENDPOINT}auth/google`, {
+            const response = await fetch(`${BUNDLER_ENDPOINT}auth/${provider}`, {
                 method: "GET",
                 headers: {
                     "x-signature": requestHeaders.signature,
@@ -32,7 +35,10 @@ const Login = ({ onLoginStart }: LoginProps) => {
             });
 
             const redirectUrl = response.headers.get("Location");
+            console.log("redirectUrl: ", redirectUrl);
+            
             if (redirectUrl) {
+                console.log(`Redirecting to ${provider} OAuth:`, redirectUrl);
                 console.log("Redirecting to:", redirectUrl);
                 window.location.href = redirectUrl; // Manually redirect the user
             } else {
@@ -41,8 +47,12 @@ const Login = ({ onLoginStart }: LoginProps) => {
         } catch (error) {
             console.error("Error initiating login:", error);
             setIsLoading(false);
+            setLoginProvider(null);
         }
     };
+
+    const handleGoogleLogin = () => handleOAuthLogin('google');
+    const handleTwitterLogin = () => handleOAuthLogin('twitter');
 
     return (
         <div className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-md">
@@ -59,7 +69,7 @@ const Login = ({ onLoginStart }: LoginProps) => {
                     disabled={isLoading}
                     className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 border border-gray-300 rounded-lg transition-colors duration-200"
                 >
-                    {isLoading ? (
+                    {isLoading && loginProvider === 'google' ? (
                         <>
                             <Loader2 className="animate-spin mr-2" size={20} />
                             Connecting...
@@ -88,8 +98,25 @@ const Login = ({ onLoginStart }: LoginProps) => {
                         </>
                     )}
                 </button>
-            </div>
 
+                <button
+                    onClick={handleTwitterLogin}
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 border border-gray-300 rounded-lg transition-colors duration-200"
+                >
+                    {isLoading && loginProvider === 'twitter' ? (
+                        <>
+                            <Loader2 className="animate-spin mr-2" size={20} />
+                            Connecting...
+                        </>
+                    ) : (
+                        <>
+                            <X className="text-black" size={20} />
+                            Continue with X (Twitter)
+                        </>
+                    )}
+                </button>
+            </div>
             <div className="mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
                 <p>By continuing, you agree to our Terms of Service and Privacy Policy.</p>
                 <p className="mt-2">All transactions secured on-chain with Universal Account.</p>
