@@ -6,6 +6,7 @@ export interface UserData {
   email: string;
   name: string;
   walletAddress?: string;
+  avatar?: string
 }
 
 export function useAuth() {
@@ -24,13 +25,15 @@ export function useAuth() {
       if (token && userDataStr) {
         try {
           const userData = JSON.parse(userDataStr);
-          const lastName = userData.googleLastName ? userData.googleLastName : (userData.twitterLastName ? userData.twitterLastName : "")
-          const firstName = userData.googleFirstName ? userData.googleFirstName : (userData.twitterFirstName ? userData.twitterFirstName : "")
+          const lastName = userData.googleLastName ? userData.googleLastName : (userData.twitterLastName ? userData.twitterLastName : userData.facebookLastName) || ''
+          const firstName = userData.googleFirstName ? userData.googleFirstName : (userData.twitterFirstName ? userData.twitterFirstName : userData.facebookFirstName) || ''
+          const avatarUrl = userData.googleAvatarUrl ? userData.googleAvatarUrl : (userData.twitterAvatarUrl ? userData.twitterAvatarUrl : userData.facebookAvatarUrl) || ''
           setUser({
             id: userData.id,
             email: userData.googleEmail,
             name: `${lastName} ${firstName}`,
-            walletAddress: `${userData.eoaWallet}`
+            walletAddress: `${userData.eoaWallet}`,
+            avatar: avatarUrl
           });
           setIsAuthenticated(true);
         } catch (error) {

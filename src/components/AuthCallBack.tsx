@@ -30,7 +30,7 @@ const AuthCallback = () => {
 
          // Determine the provider based on the URL path
          const path = window.location.pathname;
-         const provider = path.includes('twitter') ? 'twitter' : 'google';
+         const provider = path.includes('twitter') ? 'twitter' : path.includes('facebook') ? 'facebook' : 'google';
          console.log(`Using ${provider} authentication provider`);
 
         // Call your backend

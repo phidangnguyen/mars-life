@@ -52,7 +52,7 @@ const Login = ({ onLoginStart }: LoginProps) => {
 
     const handleGoogleLogin = () => handleOAuthLogin('google');
     const handleTwitterLogin = () => handleOAuthLogin('twitter');
-    // const handleFacebookLogin = () => handleOAuthLogin('facebook');
+    const handleFacebookLogin = () => handleOAuthLogin('facebook');
 
 
     return (
@@ -119,6 +119,7 @@ const Login = ({ onLoginStart }: LoginProps) => {
                 </button>
 
                 <button
+                    onClick={handleFacebookLogin}
                     disabled={isLoading}
                     className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 border border-gray-300 rounded-lg transition-colors duration-200"
                 >
