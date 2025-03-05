@@ -195,7 +195,7 @@ const LuckyWheelGame = () => {
   const handleLoginStart = () => {
     toast({
       title: "Redirecting to login",
-      description: "You'll be redirected to Google for authentication",
+      description: "You'll be redirected to Social for authentication",
     });
   };
 
