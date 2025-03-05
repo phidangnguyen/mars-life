@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Loader2, X } from 'lucide-react';
 import { createSignature } from '@/utils/signature';
-import { BUNDLER_ENDPOINT } from '@/constants/constant';
+import { BUNDLER_ENDPOINT, TELEGRAM_REDIRECT_BOT } from '@/constants/constant';
 interface LoginProps {
     onLoginStart?: () => void;
 }
@@ -19,7 +19,7 @@ const Login = ({ onLoginStart }: LoginProps) => {
 
         try {
             if (provider === "telegram") {
-                window.location.href =  "https://t.me/layer_g_auth_dev_bot?start=login-3-7c581609293E503dE149d93f34767DFF33d32C16"; // Manually redirect the user
+                window.location.href =  TELEGRAM_REDIRECT_BOT; // Manually redirect the user
                 return;
             }
 
