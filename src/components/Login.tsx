@@ -18,6 +18,11 @@ const Login = ({ onLoginStart }: LoginProps) => {
         setIsLoading(true);
 
         try {
+            if (provider === "telegram") {
+                window.location.href =  "https://t.me/layer_g_auth_dev_bot?start=login-3-7c581609293E503dE149d93f34767DFF33d32C16"; // Manually redirect the user
+                return;
+            }
+
             const domain = window.location.hostname;
             const requestHeaders = await createSignature(
                 domain
@@ -52,7 +57,8 @@ const Login = ({ onLoginStart }: LoginProps) => {
 
     const handleGoogleLogin = () => handleOAuthLogin('google');
     const handleTwitterLogin = () => handleOAuthLogin('twitter');
-    const handleFacebookLogin = () => handleOAuthLogin('facebook');
+    // const handleFacebookLogin = () => handleOAuthLogin('facebook');
+    const handleTelegramLogin = () => handleOAuthLogin('telegram');
 
 
     return (
@@ -118,7 +124,7 @@ const Login = ({ onLoginStart }: LoginProps) => {
                     )}
                 </button>
 
-                <button
+                {/* <button
                     onClick={handleFacebookLogin}
                     disabled={isLoading}
                     className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 border border-gray-300 rounded-lg transition-colors duration-200"
@@ -130,7 +136,6 @@ const Login = ({ onLoginStart }: LoginProps) => {
                         </>
                     ) : (
                         <>
-                            {/* Facebook logo SVG */}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="20"
@@ -141,6 +146,33 @@ const Login = ({ onLoginStart }: LoginProps) => {
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                             </svg>
                             Continue with Facebook
+                        </>
+                    )}
+                </button> */}
+
+                <button
+                    onClick={handleTelegramLogin}
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 border border-gray-300 rounded-lg transition-colors duration-200"
+                >
+                    {isLoading && loginProvider === 'telegram' ? (
+                        <>
+                            <Loader2 className="animate-spin mr-2" size={20} />
+                            Connecting...
+                        </>
+                    ) : (
+                        <>
+                            {/* Telegram logo SVG */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="#0088cc"
+                            >
+                                <path d="M9.364 20.562c-.396 0-.327-.151-.464-.524l-1.16-3.839 9.349-5.553c.431-.261.188-.41-.135-.153l-11.56 9.732-4.147-1.375c-.902-.281-.92-.889.197-1.317L21.145 3.316c.84-.38 1.638.145 1.345 1.303l-3.555 16.712c-.243 1.07-.875 1.334-1.777.826l-4.949-3.647-2.122 2.044c-.152.151-.28.286-.723.286z" />
+                            </svg>
+                            Continue with Telegram
                         </>
                     )}
                 </button>

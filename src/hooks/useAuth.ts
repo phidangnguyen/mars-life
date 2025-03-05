@@ -25,8 +25,28 @@ export function useAuth() {
       if (token && userDataStr) {
         try {
           const userData = JSON.parse(userDataStr);
-          const lastName = userData.googleLastName ? userData.googleLastName : (userData.twitterLastName ? userData.twitterLastName : userData.facebookLastName) || ''
-          const firstName = userData.googleFirstName ? userData.googleFirstName : (userData.twitterFirstName ? userData.twitterFirstName : userData.facebookFirstName) || ''
+
+          let lastName = ''
+          if (userData.googleLastName) {
+            lastName = userData.googleLastName
+          } else if (userData.twitterLastName) {
+            lastName = userData.twitterLastName
+          } else if (userData.twitterLastName) {
+            lastName = userData.twitterLastName
+          }else if (userData.telegramLastName) {
+            lastName = userData.telegramLastName
+          }
+
+          let firstName = ''
+          if (userData.googleFirstName) {
+            firstName = userData.googleFirstName
+          } else if (userData.twitterFirstName) {
+            firstName = userData.twitterFirstName
+          } else if (userData.twitterFirstName) {
+            firstName = userData.twitterFirstName
+          }else if (userData.telegramFirstName) {
+            firstName = userData.telegramFirstName
+          }
           const avatarUrl = userData.googleAvatarUrl ? userData.googleAvatarUrl : (userData.twitterAvatarUrl ? userData.twitterAvatarUrl : userData.facebookAvatarUrl) || ''
           setUser({
             id: userData.id,

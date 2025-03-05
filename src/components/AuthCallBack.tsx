@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { BUNDLER_ENDPOINT } from '@/constants/constant';
+import { createSignature } from '@/utils/signature';
 
 const AuthCallback = () => {
   const [status, setStatus] = useState('Processing authentication...');
@@ -15,9 +16,11 @@ const AuthCallback = () => {
         const code = urlParams.get('code');
         const state = urlParams.get('state');
 
+
+
         console.log("code::  ", code);
         console.log("state::  ", state);
-        
+
 
         if (!code || !state) {
           setStatus('Error: Missing parameters');
@@ -28,32 +31,47 @@ const AuthCallback = () => {
         const decodedState = JSON.parse(atob(state));
         console.log('Decoded state:', decodedState);
 
-         // Determine the provider based on the URL path
+        // Determine the provider based on the URL path
          const path = window.location.pathname;
-         const provider = path.includes('twitter') ? 'twitter' : path.includes('facebook') ? 'facebook' : 'google';
-         console.log(`Using ${provider} authentication provider`);
+
+        const domain = window.location.hostname;
+        const requestHeaders = await createSignature(
+          domain
+        );
+
+        let provider = '';
+        if (path.includes('twitter')) {
+          provider = 'twitter'
+        } else if (path.includes('facebook')) {
+          provider = 'facebook'
+        } else if (path.includes('google')) {
+          provider = 'google'
+        } else if (path.includes('telegram')) {
+          provider = 'telegram'
+        }
 
         // Call your backend
         const response = await fetch(`${BUNDLER_ENDPOINT}auth/${provider}/callback`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'x-signature': decodedState['x-signature'],
-            'x-timestamp': decodedState['x-timestamp'],
-            'x-api-key': decodedState['x-api-key'],
-            'origin': decodedState.origin
+            "Content-Type": 'application/json',
+            "x-signature": requestHeaders.signature,
+            "x-timestamp": `${requestHeaders.timestamp}`,
+            "origin": window.location.origin,
+            "x-api-key": requestHeaders.publicKey,
           },
           body: JSON.stringify({ code, state })
         });
-
-        console.log("response: ", response);
-        
 
         if (!response.ok) {
           throw new Error('Failed to exchange code');
         }
 
         const rs = await response.json();
+
+        console.log("Response: ", rs);
+        
+
         setStatus('Authentication successful!');
         // Store authentication data
         localStorage.setItem('token', rs.data.accessToken);
@@ -68,7 +86,7 @@ const AuthCallback = () => {
         setStatus('Authentication failed');
       }
     };
-    
+
     handleCallback();
   }, [router]);
 
