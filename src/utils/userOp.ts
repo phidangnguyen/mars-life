@@ -1,10 +1,10 @@
 import { BUNDLER_ENDPOINT } from "@/constants/constant";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const waitForUserOperationReceipt = async (hash: string, timeout = 60000, interval = 5000): Promise<any> => {
+export const waitForUserOperationReceipt = async (hash: string, chainId: number, timeout = 60000, interval = 5000): Promise<any> => {
     const startTime = Date.now();
     while (Date.now() - startTime < timeout) {        
-        const receipt = await getUserOperationReceipt(hash);
+        const receipt = await getUserOperationReceipt(hash, chainId);
         if (receipt) {
             return receipt;
         }
@@ -13,9 +13,9 @@ export const waitForUserOperationReceipt = async (hash: string, timeout = 60000,
     throw new Error('Timeout waiting for UserOperation receipt');
 }
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getUserOperationReceipt = async (hash: string): Promise<any | null> => {
+export const getUserOperationReceipt = async (hash: string, chainId: number): Promise<any | null> => {
     try {
-        const response = await fetch(`${BUNDLER_ENDPOINT}onchain/user-op-receipt/2484/${hash}`, {
+        const response = await fetch(`${BUNDLER_ENDPOINT}onchain/user-op-receipt/${chainId}/${hash}`, {
             method: 'GET'
         });
         const txReceiptData = await response.json();

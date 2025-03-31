@@ -9,7 +9,7 @@ import ResultDisplay from '@/components/ResultDisplay';
 import { useToast } from './ui/toast';
 import { useAuth } from '@/hooks/useAuth';
 import { createSignature } from '@/utils/signature';
-import { BUNDLER_ENDPOINT, LUCKY_WHEEL_CONTRACT } from '@/constants/constant';
+import { BUNDLER_ENDPOINT, LUCKY_WHEEL_CONTRACT, LUCKY_WHEEL_CONTRACT_A8_TESTNET } from '@/constants/constant';
 import { buildContractCallRequest } from '@layerg-ua-sdk/aa-sdk';
 import { WHEEL_ABI } from '@/constants/abis';
 import { waitForUserOperationReceipt } from '@/utils/userOp';
@@ -53,7 +53,7 @@ const LuckyWheelGame = () => {
 
 
 
-  const spinWheel = async () => {
+  const spinWheel = async (chainId: number) => {
     if (spinning || !isAuthenticated) return;
     setLoading(true);
     setTransactionState({
@@ -68,9 +68,12 @@ const LuckyWheelGame = () => {
       const requestHeaders = await createSignature(
         domain
       )
+
+      const wheel_contract = chainId === 2484 ? LUCKY_WHEEL_CONTRACT : LUCKY_WHEEL_CONTRACT_A8_TESTNET
+
       const txRequest = buildContractCallRequest({
         sender: "0x5da884e2602089AAc923E897b298282a40287C89",
-        contractAddress: LUCKY_WHEEL_CONTRACT,
+        contractAddress: wheel_contract,
         abi: WHEEL_ABI,
         method: "spin",
         params: []
@@ -88,7 +91,7 @@ const LuckyWheelGame = () => {
           'origin': window.location.origin,
         },
         body: JSON.stringify({
-          "chainId": 2484,
+          "chainId": chainId,
           "sponsor": true,
           "transactionReq": {
             "to": txRequest.to,
@@ -127,11 +130,11 @@ const LuckyWheelGame = () => {
       setSpinning(true);
       setLoading(false);
 
-      const receipt = await waitForUserOperationReceipt(txData.data.userOpHash)
+      const receipt = await waitForUserOperationReceipt(txData.data.userOpHash, chainId)
       console.log("receipt::", receipt.receipt);
 
 
-      const spinResult = decodeSpinCompletedEvent(receipt.receipt, LUCKY_WHEEL_CONTRACT);
+      const spinResult = decodeSpinCompletedEvent(receipt.receipt, wheel_contract);
       console.log("Decoded Spin Event:", spinResult);
 
 
@@ -305,7 +308,7 @@ const LuckyWheelGame = () => {
           ) : (
             <div className="flex flex-col items-center">
               <button
-                onClick={spinWheel}
+                onClick={() => spinWheel(2484)}
                 disabled={spinning || loading}
                 className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 
                            text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg flex items-center 
@@ -322,7 +325,29 @@ const LuckyWheelGame = () => {
                     Spinning...
                   </>
                 ) : (
-                  'Spin the Wheel'
+                  'U2U Spin the Wheel'
+                )}
+              </button>
+
+              <button
+                onClick={() => spinWheel(28122024)}
+                disabled={spinning || loading}
+                className="mt-4 bg-gradient-to-r from-orange-500 to-red-600 hover:from-green-600 hover:to-emerald-700 
+                           text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg flex items-center 
+                           disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2" size={20} />
+                    Processing...
+                  </>
+                ) : spinning ? (
+                  <>
+                    <RotateCw className="animate-spin mr-2" size={20} />
+                    Spinning...
+                  </>
+                ) : (
+                  'A8 Spin the Wheel'
                 )}
               </button>
 
