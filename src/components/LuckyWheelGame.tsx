@@ -8,8 +8,7 @@ import TransactionStatus from '@/components/TransactionStatus';
 import ResultDisplay from '@/components/ResultDisplay';
 import { useToast } from './ui/toast';
 import { useAuth } from '@/hooks/useAuth';
-import { createSignature } from '@/utils/signature';
-import { BUNDLER_ENDPOINT, LUCKY_WHEEL_CONTRACT, LUCKY_WHEEL_CONTRACT_A8_TESTNET } from '@/constants/constant';
+import { API_KEY, BUNDLER_ENDPOINT, LUCKY_WHEEL_CONTRACT, LUCKY_WHEEL_CONTRACT_A8_TESTNET } from '@/constants/constant';
 import { buildContractCallRequest } from '@layerg-ua-sdk/aa-sdk';
 import { WHEEL_ABI } from '@/constants/abis';
 import { waitForUserOperationReceipt } from '@/utils/userOp';
@@ -64,10 +63,6 @@ const LuckyWheelGame = () => {
 
     try {
       // Create authentication signature
-      const domain = window.location.hostname;
-      const requestHeaders = await createSignature(
-        domain
-      )
 
       const wheel_contract = chainId === 2484 ? LUCKY_WHEEL_CONTRACT : LUCKY_WHEEL_CONTRACT_A8_TESTNET
 
@@ -85,10 +80,8 @@ const LuckyWheelGame = () => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'x-signature': requestHeaders.signature,
-          'x-timestamp': `${requestHeaders.timestamp}`,
-          'x-api-key': requestHeaders.publicKey,
-          'origin': window.location.origin,
+          'x-api-key': API_KEY,
+          "x-timestamp": `${Date.now()}`,
         },
         body: JSON.stringify({
           "chainId": chainId,
