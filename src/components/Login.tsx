@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Loader2, X } from 'lucide-react';
-import { createSignature } from '@/utils/signature';
-import { BUNDLER_ENDPOINT, TELEGRAM_REDIRECT_BOT } from '@/constants/constant';
+import { API_KEY, BUNDLER_ENDPOINT, TELEGRAM_REDIRECT_BOT } from '@/constants/constant';
 interface LoginProps {
     onLoginStart?: () => void;
 }
@@ -11,6 +10,8 @@ const Login = ({ onLoginStart }: LoginProps) => {
     const [loginProvider, setLoginProvider] = useState<string | null>(null);
 
     const handleOAuthLogin = async (provider: string) => {
+        console.log("handleOAuthLogin:::", provider)
+        console.log("BUNDLER_ENDPOINT:::", BUNDLER_ENDPOINT, onLoginStart)
         if (onLoginStart) {
             onLoginStart();
         }
@@ -23,17 +24,13 @@ const Login = ({ onLoginStart }: LoginProps) => {
                 return;
             }
 
-            const domain = window.location.hostname;
-            const requestHeaders = await createSignature(
-                domain
-            );
+            console.log("BUNDLER_ENDPOINT:::", BUNDLER_ENDPOINT)
+
             const response = await fetch(`${BUNDLER_ENDPOINT}auth/${provider}`, {
                 method: "GET",
                 headers: {
-                    "x-signature": requestHeaders.signature,
-                    "x-timestamp": `${requestHeaders.timestamp}`,
-                    "origin": window.location.origin,
-                    "x-api-key": requestHeaders.publicKey,
+                    "x-api-key": API_KEY,
+                    "x-timestamp": `${Date.now()}`,
                 },
                 redirect: "manual", // Prevents auto-following redirects
             });

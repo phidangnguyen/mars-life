@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { BUNDLER_ENDPOINT } from '@/constants/constant';
-import { createSignature } from '@/utils/signature';
+import { API_KEY, BUNDLER_ENDPOINT } from '@/constants/constant';
 
 const AuthCallback = () => {
   const [status, setStatus] = useState('Processing authentication...');
@@ -16,28 +15,13 @@ const AuthCallback = () => {
         const code = urlParams.get('code');
         const state = urlParams.get('state');
 
-
-
-        console.log("code::  ", code);
-        console.log("state::  ", state);
-
-
         if (!code || !state) {
           setStatus('Error: Missing parameters');
           return;
         }
 
-        // Decode state parameter
-        const decodedState = JSON.parse(atob(state));
-        console.log('Decoded state:', decodedState);
-
         // Determine the provider based on the URL path
          const path = window.location.pathname;
-
-        const domain = window.location.hostname;
-        const requestHeaders = await createSignature(
-          domain
-        );
 
         let provider = '';
         if (path.includes('twitter')) {
@@ -50,15 +34,15 @@ const AuthCallback = () => {
           provider = 'telegram'
         }
 
+        console.log("BUNDLER_ENDPOINT: ", BUNDLER_ENDPOINT)
+
         // Call your backend
         const response = await fetch(`${BUNDLER_ENDPOINT}auth/${provider}/callback`, {
           method: 'POST',
           headers: {
             "Content-Type": 'application/json',
-            "x-signature": requestHeaders.signature,
-            "x-timestamp": `${requestHeaders.timestamp}`,
-            "origin": window.location.origin,
-            "x-api-key": requestHeaders.publicKey,
+            "x-api-key": API_KEY,
+            "x-timestamp": `${Date.now()}`,
           },
           body: JSON.stringify({ code, state })
         });
