@@ -81,7 +81,6 @@ const LuckyWheelGame = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'x-api-key': API_KEY,
-          "x-timestamp": `${Date.now()}`,
         },
         body: JSON.stringify({
           "chainId": chainId,

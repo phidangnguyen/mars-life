@@ -30,7 +30,6 @@ const Login = ({ onLoginStart }: LoginProps) => {
                 method: "GET",
                 headers: {
                     "x-api-key": API_KEY,
-                    "x-timestamp": `${Date.now()}`,
                 },
                 redirect: "manual", // Prevents auto-following redirects
             });
